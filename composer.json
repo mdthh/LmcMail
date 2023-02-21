@@ -1,0 +1,25 @@
+{
+  "name": "lm-commons/lmc-mail",
+  "description": "Wrapper for Laminas Mail that uses View Model to compose the email body",
+  "minimum-stability": "stable",
+  "type": "library",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Eric Richer",
+      "email": "eric.richer@vistoconsulting.com"
+    }
+  ],
+  "require": {
+    "php": "^8.1",
+    "laminas/laminas-servicemanager": "^3.0",
+    "laminas/laminas-modulemanager": "^2.1",
+    "laminas/laminas-mail": "^2.1",
+    "laminas/laminas-view": "^2.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "LmcMail\\": "src"
+    }
+  }
+}
