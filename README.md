@@ -1,4 +1,4 @@
-# LmcEmail
+# LmcMail
 
 An email service module that provides the ability to use the View renderer of a Laminas MVC application
 and the installed View Helper plugins to render HTML emails.
