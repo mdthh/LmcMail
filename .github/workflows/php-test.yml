@@ -36,7 +36,7 @@ jobs:
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: Create the data directory
-      run: mkidr ./data
+      run: mkdir ./data
     - name: Create the data/email directory
       run: mkdir ./data/emails
       
