@@ -6,9 +6,10 @@
 
 namespace LmcMail\Service;
 
-use Exception;
+use Laminas\Mail\Address;
+use Laminas\Mail\Address\AddressInterface;
+use Laminas\Mail\AddressList;
 use Laminas\Mail\Message;
-use Laminas\Mail\Message as MailMessage;
 use Laminas\Mail\Transport\TransportInterface;
 use Laminas\Mime\Message as MimeMessage;
 use Laminas\Mime\Mime;
@@ -16,6 +17,7 @@ use Laminas\Mime\Part as MimePart;
 use Laminas\View\Model\ModelInterface;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
+use Traversable;
 
 class MessageService
 {
@@ -38,6 +40,13 @@ class MessageService
     protected array $from = [];
 
     /**
+     * Default layout template
+     * @var string
+     */
+    protected string $layoutTemplate = 'mail/layout';
+
+
+    /**
      * @param PhpRenderer $renderer
      * @param TransportInterface $transport
      * @param array $from
@@ -49,48 +58,77 @@ class MessageService
         $this->from = $from;
     }
 
+    /**
+     * @param PhpRenderer $renderer
+     * @return $this
+     */
     public function setRenderer(PhpRenderer $renderer): MessageService
     {
         $this->renderer = $renderer;
         return $this;
     }
 
+    /**
+     * @return PhpRenderer
+     */
     public function getRenderer(): PhpRenderer
     {
         return $this->renderer;
     }
 
+    /**
+     * @param TransportInterface $transport
+     * @return $this
+     */
     public function setTransport(TransportInterface $transport): MessageService
     {
         $this->transport = $transport;
         return $this;
     }
 
+    /**
+     * @return TransportInterface
+     */
     public function getTransport(): TransportInterface
     {
         return $this->transport;
     }
 
+    /**
+     * Set the layout template
+     * @param string $layoutTemplate
+     * @return $this
+     */
+    public function setLayoutTemplate(string $layoutTemplate): MessageService
+    {
+        $this->layoutTemplate = $layoutTemplate;
+        return $this;
+    }
 
     /**
      * Create an HTML message
-     * @param string|array $from
-     * @param string|array $to
+     * @param string|Address|AddressInterface|array|AddressList|Traversable $from
+     * @param string|Address|AddressInterface|array|AddressList|Traversable $to
      * @param string $subject
-     * @param ModelInterface $nameOrModel
-     * @param array $values
+     * @param string|ModelInterface $nameOrModel
      * @return Message
-     * @throws Exception
      */
-    public function createHtmlMessage(string|array $from, string|array $to, string $subject, ModelInterface $nameOrModel, array $values=[]): Message
+    public function createHtmlMessage(string|Address|AddressInterface|array|AddressList|Traversable $from,
+                                      string|Address|AddressInterface|array|AddressList|Traversable $to,
+                                      string $subject,
+                                      string|ModelInterface $nameOrModel): Message
     {
         $view = new ViewModel();
-        $view->setTemplate('mail/layout');
+        $view->setTemplate($this->layoutTemplate);
 
-        if (!$nameOrModel instanceof ModelInterface) {
-            throw new Exception('$nameOrModel must be a View Model');
+        if (is_string($nameOrModel)) {
+            $childView = new ViewModel();
+            $childView->setTemplate($nameOrModel);
+        } else {
+            $childView = $nameOrModel;
         }
-        $view->addChild($nameOrModel,'message');
+
+        $view->addChild($childView,'message');
         $content = $this->render($view);
 
         $text = new MimePart('');
@@ -106,46 +144,45 @@ class MessageService
 
     /**
      * Create a text message
-     * @param string|array $from
-     * @param string|array $to
+     * @param string|Address|AddressInterface|array|AddressList|Traversable $from
+     * @param string|Address|AddressInterface|array|AddressList|Traversable $to
      * @param string $subject
-     * @param ModelInterface $nameOrModel
-     * @param array $values
+     * @param string|ModelInterface $nameOrModel
      * @return Message
      */
-    public function createTextMessage(string|array $from, string|array $to, string $subject, ModelInterface $nameOrModel, array $values=[]): Message
+    public function createTextMessage(string|Address|AddressInterface|array|AddressList|Traversable $from,
+                                      string|Address|AddressInterface|array|AddressList|Traversable $to,
+                                      string $subject,
+                                      string|ModelInterface $nameOrModel): Message
     {
-        $content = $this->renderer->render($nameOrModel, $values);
+        $content = $this->renderer->render($nameOrModel);
         return $this->getDefaultMessage($from, 'utf-8', $to, $subject, $content);
     }
 
     /**
      * Send the message
-     * @param MailMessage $message
+     * @param Message $message
      */
-    public function send(MailMessage $message): void
+    public function send(Message $message): void
     {
         $this->transport->send($message);
     }
 
     /**
      * Create default message
-     * @param string|array $from
+     * @param string|Address|AddressInterface|array|AddressList|Traversable $from
      * @param string $encoding
      * @param string|array $to
      * @param string $subject
-     * @param Message|string $body
-     * @return MailMessage
+     * @param MimeMessage|string $body
+     * @return Message
      */
-    protected function getDefaultMessage(string|array $from, string $encoding, string|array $to, string $subject, MimeMessage|string $body): MailMessage
+    protected function getDefaultMessage(string|Address|AddressInterface|array|AddressList|Traversable $from, string $encoding, string|array $to, string $subject, MimeMessage|string $body): Message
     {
-        $message = new MailMessage();
+        $message = new Message();
         if (is_string($from)) {
-            $from = [
-                'email' => $from,
-                'name' => $from,
-            ];
-        } else if (!is_array($from) || empty($from)) {
+            $from = ['email' => $from];
+        } else if (is_array($from) || empty($from)) {
             $from = $this->from;
         }
 
@@ -164,10 +201,7 @@ class MessageService
     protected function getFrom($from):array
     {
         if (is_string($from)) {
-            return [
-                'email' => $from,
-                'name' => $from,
-            ];
+            return ['email' => $from];
         }
         if (is_array($from) && !empty($from)) {
             return $from;

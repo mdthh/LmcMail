@@ -43,7 +43,7 @@ class MessageServiceTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('User', $addresses->getName(), "Was expecting name to be user");
     }
 
-    public function testCreateHtmlMessage()
+    public function testCreateHtmlMessageFromModel()
     {
         $viewModel = new ViewModel();
         $viewModel->setTemplate('mail/test_html');
@@ -58,9 +58,43 @@ class MessageServiceTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('User', $addresses->getName(), "Was expecting name to be user");
     }
 
-    public function testSendMessage()
+    public function testCreateHtmlMessageFromName()
+    {
+        $message = $this->messageService->createHtmlMessage([],[], 'test','mail/test_html');
+        $this->assertInstanceOf(Message::class, $message);
+        $body = $message->getBody();
+        $this->assertInstanceOf(MimeMessage::class, $body);
+        $from = $message->getFrom();
+        $addresses = $from->get('user@example.com');
+        $this->assertNotFalse($addresses,'Address not found');
+        $this->assertEquals('user@example.com', $addresses->getEmail(), "Was expecting email address to be user@example.com");
+        $this->assertEquals('User', $addresses->getName(), "Was expecting name to be user");
+    }
+
+    public function testCreateHtmlMessageManyTos()
+    {
+        $message = $this->messageService->createHtmlMessage([],['test@example.com', 'test2@example.com'], 'test','mail/test_html');
+        $this->assertInstanceOf(Message::class, $message);
+        $body = $message->getBody();
+        $this->assertInstanceOf(MimeMessage::class, $body);
+        $to = $message->getTo();
+        $this->assertCount(2, $to);
+        $addresses = $to->get('test@example.com');
+        $this->assertNotFalse($addresses,'Address not found');
+        $this->assertEquals('test@example.com', $addresses->getEmail(), "Was expecting email address to be user@example.com");
+    }
+
+    public function testSendTextMessage()
     {
         $message = $this->messageService->createTextMessage([],[], 'test', 'mail/test_text');
+        $this->messageService->send($message);
+        $files = glob($this->getPath() . '/*');
+        $this->assertGreaterThan(0, count($files));
+    }
+
+    public function testSendHtmlMessage()
+    {
+        $message = $this->messageService->createHtmlMessage([],[], 'test','mail/test_html');
         $this->messageService->send($message);
         $files = glob($this->getPath() . '/*');
         $this->assertGreaterThan(0, count($files));

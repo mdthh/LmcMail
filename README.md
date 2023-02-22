@@ -97,15 +97,94 @@ a layout template aliased as `'mail/layout'` in the view template map. This is d
 #### createHtmlMessage
 
 ````php
-createHtmlMessage(string|array $from, string|array $to, string $subject, ModelInterface $nameOrModel, array $values=[]): \Laminas\Mime\Message::class
+ /**
+  * Create an HTML message
+  * @param string|Address|AddressInterface|array|AddressList|Traversable $from
+  * @param string|Address|AddressInterface|array|AddressList|Traversable $to
+  * @param string $subject
+  * @param string|ModelInterface $nameOrModel
+  * @return Message
+  */
+createHtmlMessage(string|Address|AddressInterface|array|AddressList|Traversable $from, 
+                  string|Address|AddressInterface|array|AddressList|Traversable $to, 
+                  string $subject, 
+                  string|ModelInterface $nameOrModel): \Laminas\Mime\Message::class
 ````
+If `$nameorModel` is a string, it must correspond to the view template to use. 
+
 
 #### createTextMessage
 ````php
-createTextMessage(string|array $from, string|array $to, string $subject, ModelInterface $nameOrModel, array $values=[]): \Laminas\Mail\Message::class
+/**
+ * Create a text message
+ * @param string|Address|AddressInterface|array|AddressList|Traversable $from
+ * @param string|Address|AddressInterface|array|AddressList|Traversable $to
+ * @param string $subject
+ * @param string|ModelInterface $nameOrModel
+ * @return Message
+ */
+createTextMessage(string|Address|AddressInterface|array|AddressList|Traversable $from, 
+                  string|Address|AddressInterface|array|AddressList|Traversable $to, 
+                  string $subject, 
+                  ModelInterface $nameOrModel): \Laminas\Mail\Message::class
 ````
+If `$nameorModel` is a string, it must correspond to the view template to use.
 
 #### send
 ````php
-send(MailMessage $message): void
+/**
+ * Send the message
+ * @param Message $message
+ */
+send(Message $message): void
 ````
+where `$message` can be any object of type `\Laminas\Mail\Message` not necessarily one created by the above methods.
+
+### Advanced Customizations
+
+LmcMail can be customized to the applications needs.
+
+#### Modify the view templates
+
+LmcMail uses nested view models to render the body of HTML messages. 
+
+In a similar fashion to the view model structure of the Laminas MVC Skeleton,
+the body is rendered using a layout view model to which the view model parameter (`$nameOrModel`) to the `createHtmlMessage` method is added a child.
+The rendered output of the `$nameOrModel` view model is captured in the variable `message` which is passed to the layout view model.
+
+A default template `mail/layout` is supplied. The layout template can be modified using the `setLayoutTemplate()` method. Alternatively,
+the 'mail/layout' entry in the View Manager template map can be overridden to point to your template.
+
+#### Use alternate View Resolved and View Helper Manager
+
+LmcMail uses Service Manager aliases to get the View Resolver and View Helper Manager which resolves to the Laminas MVC renderer and manager. This allows to use any view template and helpers already defined in the application.
+
+````php
+'aliases' => [
+    // These aliases are used by the MailViewRendererFactory
+    // by default, they resolve to the Laminas MVC View Helper manager and Resolver
+    'lmc_mail_view_helper_manager' => 'ViewHelperManager',
+    'lmc_mail_view_resolver' => 'ViewResolver',
+],
+````
+If you want to use a different resolver and view helper manager, then update the aliases to point to your classes:
+
+````php
+'aliases' => [
+    'lmc_mail_view_helper_manager' => 'MyHelperManager',
+    'lmc_mail_view_resolver' => 'MyViewResolver',
+],
+````
+
+If you want to use your own renderer, then you can override the Service Manager factory:
+````php
+'factories' => [
+    // Override the factory with your own
+    'lmc_mail_view_renderer' => MailViewRendererFactory::class,
+    /* ... */
+],
+````
+
+
+
+
