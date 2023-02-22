@@ -18,8 +18,8 @@ class MailViewRendererFactory implements \Laminas\ServiceManager\Factory\Factory
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         $renderer = new PhpRenderer();
-        $helperManager = $container->get('ViewHelperManager');
-        $resolver = $container->get('ViewResolver');
+        $helperManager = $container->get('lmc_mail_view_helper_manager');
+        $resolver = $container->get('lmc_mail_view_resolver');
         $renderer->setHelperPluginManager($helperManager);
         $renderer->setResolver($resolver);
         return $renderer;

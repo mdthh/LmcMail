@@ -7,6 +7,8 @@ namespace LmcMail;
 
 use Laminas\ModuleManager\Feature\ConfigProviderInterface;
 use Laminas\ModuleManager\Feature\ServiceProviderInterface;
+use LmcMail\Options\MailOptions;
+use LmcMail\Options\MailOptionsFactory;
 use LmcMail\Options\TransportOptions;
 use LmcMail\Options\TransportOptionsFactory;
 use LmcMail\Service\MessageService;
@@ -25,11 +27,16 @@ class Module implements ConfigProviderInterface, ServiceProviderInterface
     public function getServiceConfig(): array
     {
         return [
+            'aliases' => [
+                // These aliases are used by the MailViewRendererFactory
+                // by default, they resolve to the Laminas MVC View Helper manager and Resolver
+                'lmc_mail_view_helper_manager' => 'ViewHelperManager',
+                'lmc_mail_view_resolver' => 'ViewResolver',
+            ],
             'factories' => [
-                TransportOptions::class => TransportOptionsFactory::class,
-                'lmc_mail_transport_service' => TransportServiceFactory::class,
                 'lmc_mail_view_renderer' => MailViewRendererFactory::class,
                 MessageService::class => MessageServiceFactory::class,
+                MailOptions::class => MailOptionsFactory::class,
             ],
         ];
     }

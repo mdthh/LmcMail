@@ -37,14 +37,40 @@ class MessageService
      */
     protected array $from = [];
 
-    public function __construct(PhpRenderer $renderer, TransportInterface $transport, array $config=[])
+    /**
+     * @param PhpRenderer $renderer
+     * @param TransportInterface $transport
+     * @param array $from
+     */
+    public function __construct(PhpRenderer $renderer, TransportInterface $transport, array $from=[])
     {
         $this->renderer = $renderer;
         $this->transport = $transport;
-        if (isset($config['from'])) {
-            $this->from = $config['from'];
-        }
+        $this->from = $from;
     }
+
+    public function setRenderer(PhpRenderer $renderer): MessageService
+    {
+        $this->renderer = $renderer;
+        return $this;
+    }
+
+    public function getRenderer(): PhpRenderer
+    {
+        return $this->renderer;
+    }
+
+    public function setTransport(TransportInterface $transport): MessageService
+    {
+        $this->transport = $transport;
+        return $this;
+    }
+
+    public function getTransport(): TransportInterface
+    {
+        return $this->transport;
+    }
+
 
     /**
      * Create an HTML message
@@ -108,10 +134,10 @@ class MessageService
      * @param string $encoding
      * @param string|array $to
      * @param string $subject
-     * @param Message $body
+     * @param Message|string $body
      * @return MailMessage
      */
-    protected function getDefaultMessage(string|array $from, string $encoding, string|array $to, string $subject, Message $body): MailMessage
+    protected function getDefaultMessage(string|array $from, string $encoding, string|array $to, string $subject, MimeMessage|string $body): MailMessage
     {
         $message = new MailMessage();
         if (is_string($from)) {
