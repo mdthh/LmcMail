@@ -35,9 +35,10 @@ jobs:
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
-    - name: Set up the data/emails directory
-    - run: mkidr ./data
-    - run: mkdir ./data/emails
+    - name: Create the data directory
+      run: mkidr ./data
+    - name: Create the data/email directory
+      run: mkdir ./data/emails
       
     - name: Run test suite
       run: composer run-script test
