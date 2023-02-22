@@ -153,7 +153,9 @@ the body is rendered using a layout view model to which the view model parameter
 The rendered output of the `$nameOrModel` view model is captured in the variable `message` which is passed to the layout view model.
 
 A default template `mail/layout` is supplied. The layout template can be modified using the `setLayoutTemplate()` method. Alternatively,
-the 'mail/layout' entry in the View Manager template map can be overridden to point to your template.
+the `mail/layout` entry in the View Manager template map can be overridden to point to your template.
+
+View Helpers can be used in views. A common use case is to use `$this->url()` to render a link to your application.
 
 #### Use alternate View Resolved and View Helper Manager
 
