@@ -55,7 +55,7 @@ return [
         'transport' => [
             'type' => 'file',
             'options' => [
-                'path' => __DIR__ . '/../data',
+                'path' => '/path/to/email/folder',
             ],
         ],
     ],
