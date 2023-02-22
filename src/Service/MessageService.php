@@ -77,12 +77,12 @@ class MessageService
      * @param string|array $from
      * @param string|array $to
      * @param string $subject
-     * @param string|ModelInterface $nameOrModel
+     * @param ModelInterface $nameOrModel
      * @param array $values
      * @return Message
      * @throws Exception
      */
-    public function createHtmlMessage(string|array $from, string|array $to, string $subject, string|ModelInterface $nameOrModel, array $values=[]): Message
+    public function createHtmlMessage(string|array $from, string|array $to, string $subject, ModelInterface $nameOrModel, array $values=[]): Message
     {
         $view = new ViewModel();
         $view->setTemplate('mail/layout');
@@ -109,11 +109,11 @@ class MessageService
      * @param string|array $from
      * @param string|array $to
      * @param string $subject
-     * @param string|ModelInterface $nameOrModel
+     * @param ModelInterface $nameOrModel
      * @param array $values
      * @return Message
      */
-    public function createTextMessage(string|array $from, string|array $to, string $subject, string|ModelInterface $nameOrModel, array $values=[]): Message
+    public function createTextMessage(string|array $from, string|array $to, string $subject, ModelInterface $nameOrModel, array $values=[]): Message
     {
         $content = $this->renderer->render($nameOrModel, $values);
         return $this->getDefaultMessage($from, 'utf-8', $to, $subject, $content);

@@ -1,12 +1,6 @@
 <?php
 return [
     'lmc_mail' => [
-/*
-        'type' => 'file',
-        'options' => [
-            'path' => __DIR__ . '/../data/emails',
-        ],
-*/
         'from' => [
             'email' => 'user@example.com',
             'name' => 'User',
@@ -20,7 +14,7 @@ return [
     ],
     'view_manager' => [
         'template_map' => [
-            'mail/test' => __DIR__ . '/./view/test.phtml',
+            'mail/test_html' => __DIR__ . '/./view/test_html.phtml',
             'mail/test_text' => __DIR__ . '/./view/test_text.phtml',
         ],
     ],
