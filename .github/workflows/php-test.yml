@@ -1,4 +1,4 @@
-name: PHP Test 1
+name: PHP Test
 
 on:
   push:
