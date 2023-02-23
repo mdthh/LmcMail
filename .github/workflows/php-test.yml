@@ -29,18 +29,18 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
-    - name: Install dependencies
+    - name: Create the data/email directory
+      run: |
+        mkdir ./data ./data/emails
+
+    - name: Install dependencies with latest
       run: composer install --prefer-dist
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
+    - name: Run test suite
+      run: composer run-script test
 
-    - name: Create the data directory
-      run: |
-        mkdir ./data
-        mkdir ./data/emails
-   # - name: Create the data/email directory
-#      run: mkdir ./data/emails
-      
+    - name: Install dependencies with --prefer-lowest
+      run: composer install --prefer-lowest
+
     - name: Run test suite
       run: composer run-script test
