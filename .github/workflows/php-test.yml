@@ -36,9 +36,11 @@ jobs:
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: Create the data directory
-      run: mkdir ./data
-    - name: Create the data/email directory
-      run: mkdir ./data/emails
+      run: |
+        mkdir ./data
+        mkdir ./data/emails
+   # - name: Create the data/email directory
+#      run: mkdir ./data/emails
       
     - name: Run test suite
       run: composer run-script test
