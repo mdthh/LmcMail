@@ -6,6 +6,9 @@
 
 namespace LmcMail\Service;
 
+use Laminas\EventManager\EventManager;
+use Laminas\EventManager\EventManagerAwareInterface;
+use Laminas\EventManager\EventManagerInterface;
 use Laminas\Mail\Address;
 use Laminas\Mail\Address\AddressInterface;
 use Laminas\Mail\AddressList;
@@ -19,7 +22,7 @@ use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
 use Traversable;
 
-class MessageService
+class MessageService implements EventManagerAwareInterface
 {
     /**
      * Renderer
@@ -45,6 +48,7 @@ class MessageService
      */
     protected string $layoutTemplate = 'mail/layout';
 
+    protected ?EventManagerInterface $events = null;
 
     /**
      * @param PhpRenderer $renderer
@@ -165,7 +169,13 @@ class MessageService
      */
     public function send(Message $message): void
     {
+        $event = new MessageEvent(MessageEvent::SEND, $this);
+        $event->setMessage($message);
+        $this->getEventManager()->triggerEvent($event);
+        $message = $event->getMessage();
         $this->transport->send($message);
+        $event->setName(MessageEvent::SEND_POST);
+        $this->getEventManager()->triggerEvent($event);
     }
 
     /**
@@ -246,5 +256,20 @@ class MessageService
                 }
             }
         }
+    }
+
+    public function setEventManager(EventManagerInterface $eventManager): void
+    {
+        $identifiers = [__CLASS__, get_called_class()];
+        $eventManager->setIdentifiers($identifiers);
+        $this->events = $eventManager;
+    }
+
+    public function getEventManager(): EventManagerInterface
+    {
+        if (is_null($this->events)) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
     }
 }

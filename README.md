@@ -187,6 +187,19 @@ If you want to use your own renderer, then you can override the Service Manager 
 ],
 ````
 
+### Event Listening
 
+`MessageService::send()` triggers two events:  
 
+- `MessageEvent::SEND` is triggered right before the message is sent by the transport service.
+- `MessageEvent::SEND_POST` is triggered right after the message has been sent by the transport service.
 
+The listener to these events will receive a event of class`MessageEvent` that extends the `Event` class with:
+
+- A `$message` property containing the message. The message is also stored in an event parameter named 'message'.
+- A `getMessage()` method to get the `$message` property.
+- A `setMessage(Message $message)` method to set the `$message` property and the corresponding event parameters.
+
+The `MessageService::send()` method, after triggering the `MessageEvent::SEND` event, will retrieve the message from the event and pass it to the transport service. This allows for the listener to modify the message if needed.
+
+A typical use case for listening to the send events would be to log that a message was sent.
