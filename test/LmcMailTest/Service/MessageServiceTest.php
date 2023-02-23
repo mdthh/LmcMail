@@ -47,7 +47,7 @@ class MessageServiceTest extends \PHPUnit\Framework\TestCase
     {
         $viewModel = new ViewModel();
         $viewModel->setTemplate('mail/test_html');
-        $message = $this->messageService->createHtmlMessage([],[], 'test',$viewModel);
+        $message = $this->messageService->createHtmlMessage(null,[], 'test',$viewModel);
         $this->assertInstanceOf(Message::class, $message);
         $body = $message->getBody();
         $this->assertInstanceOf(MimeMessage::class, $body);

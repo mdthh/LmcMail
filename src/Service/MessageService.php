@@ -107,13 +107,13 @@ class MessageService
 
     /**
      * Create an HTML message
-     * @param string|Address|AddressInterface|array|AddressList|Traversable $from
+     * @param string|Address|AddressInterface|array|AddressList|Traversable|null $from
      * @param string|Address|AddressInterface|array|AddressList|Traversable $to
      * @param string $subject
      * @param string|ModelInterface $nameOrModel
      * @return Message
      */
-    public function createHtmlMessage(string|Address|AddressInterface|array|AddressList|Traversable $from,
+    public function createHtmlMessage(string|Address|AddressInterface|array|AddressList|Traversable|null $from,
                                       string|Address|AddressInterface|array|AddressList|Traversable $to,
                                       string $subject,
                                       string|ModelInterface $nameOrModel): Message
@@ -150,7 +150,7 @@ class MessageService
      * @param string|ModelInterface $nameOrModel
      * @return Message
      */
-    public function createTextMessage(string|Address|AddressInterface|array|AddressList|Traversable $from,
+    public function createTextMessage(string|Address|AddressInterface|array|AddressList|Traversable|null $from,
                                       string|Address|AddressInterface|array|AddressList|Traversable $to,
                                       string $subject,
                                       string|ModelInterface $nameOrModel): Message
@@ -177,10 +177,17 @@ class MessageService
      * @param MimeMessage|string $body
      * @return Message
      */
-    protected function getDefaultMessage(string|Address|AddressInterface|array|AddressList|Traversable $from, string $encoding, string|array $to, string $subject, MimeMessage|string $body): Message
+    protected function getDefaultMessage(string|Address|AddressInterface|array|AddressList|Traversable|null $from,
+                                         string $encoding,
+                                         string|array $to,
+                                         string $subject,
+                                         MimeMessage|string $body): Message
     {
         $message = new Message();
-        if (is_string($from)) {
+        if (is_null($from)) {
+            $from = $this->from;
+        }
+        else if (is_string($from)) {
             $from = ['email' => $from];
         } else if (is_array($from) || empty($from)) {
             $from = $this->from;
