@@ -148,7 +148,7 @@ class MessageService implements EventManagerAwareInterface
 
     /**
      * Create a text message
-     * @param string|Address|AddressInterface|array|AddressList|Traversable $from
+     * @param string|Address|AddressInterface|array|AddressList|Traversable|null $from
      * @param string|Address|AddressInterface|array|AddressList|Traversable $to
      * @param string $subject
      * @param string|ModelInterface $nameOrModel
@@ -180,16 +180,16 @@ class MessageService implements EventManagerAwareInterface
 
     /**
      * Create default message
-     * @param string|Address|AddressInterface|array|AddressList|Traversable $from
+     * @param string|Address|AddressInterface|array|AddressList|Traversable|null $from
      * @param string $encoding
-     * @param string|array $to
+     * @param string|Address|AddressInterface|array|AddressList|Traversable $to
      * @param string $subject
      * @param MimeMessage|string $body
      * @return Message
      */
     protected function getDefaultMessage(string|Address|AddressInterface|array|AddressList|Traversable|null $from,
                                          string $encoding,
-                                         string|array $to,
+                                         string|Address|AddressInterface|array|AddressList|Traversable $to,
                                          string $subject,
                                          MimeMessage|string $body): Message
     {

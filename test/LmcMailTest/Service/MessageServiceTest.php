@@ -2,12 +2,14 @@
 
 namespace Service;
 
+use Laminas\Mail\AddressList;
 use Laminas\Mail\Message;
 use Laminas\Mime\Message as MimeMessage;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\View\Model\ViewModel;
 use LmcMail\Service\MessageService;
 use LmcMailTest\Util\ServiceManagerFactory;
+use LmcMailTest\Mock\MockAddress;
 
 class MessageServiceTest extends \PHPUnit\Framework\TestCase
 {
@@ -81,7 +83,36 @@ class MessageServiceTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(2, $to);
         $addresses = $to->get('test@example.com');
         $this->assertNotFalse($addresses,'Address not found');
-        $this->assertEquals('test@example.com', $addresses->getEmail(), "Was expecting email address to be user@example.com");
+        $this->assertEquals('test@example.com', $addresses->getEmail(), "Was expecting email address to be test@example.com");
+    }
+
+    public function testCreateHtmlMessageAddressListTo()
+    {
+        $addressList = new AddressList();
+        $addressList->add('test1@example.com');
+        $addressList->add('test2@example.com');
+        $message = $this->messageService->createHtmlMessage([],$addressList, 'test','mail/test_html');
+        $this->assertInstanceOf(Message::class, $message);
+        $body = $message->getBody();
+        $this->assertInstanceOf(MimeMessage::class, $body);
+        $to = $message->getTo();
+        $this->assertCount(2, $to);
+        $addresses = $to->get('test1@example.com');
+        $this->assertNotFalse($addresses,'Address not found');
+        $this->assertEquals('test1@example.com', $addresses->getEmail(), "Was expecting email address to be test1@example.com");
+    }
+
+    public function testCreateHtmlMessageAddressInterfaceTo()
+    {
+        $message = $this->messageService->createHtmlMessage([],new MockAddress(), 'test','mail/test_html');
+        $this->assertInstanceOf(Message::class, $message);
+        $body = $message->getBody();
+        $this->assertInstanceOf(MimeMessage::class, $body);
+        $to = $message->getTo();
+        $this->assertCount(1, $to);
+        $addresses = $to->get('test@example.com');
+        $this->assertNotFalse($addresses,'Address not found');
+        $this->assertEquals('test@example.com', $addresses->getEmail(), "Was expecting email address to be test1@example.com");
     }
 
     public function testSendTextMessage()
