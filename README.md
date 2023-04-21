@@ -1,3 +1,8 @@
+[![Continuous Integration](https://github.com/lm-commons/LmcMail/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/lm-commons/LmcMail/actions/workflows/continuous-integration.yml)
+[![Latest Stable Version](https://poser.pugx.org/lm-commons/lmc-mail/v/stable)](https://packagist.org/packages/lm-commons/lmc-mail)
+[![Total Downloads](http://poser.pugx.org/lm-commons/lmc-mail/downloads)](https://packagist.org/packages/lm-commons/lmc-mail)
+[![License](http://poser.pugx.org/lm-commons/lmc-mail/license)](https://packagist.org/packages/lm-commons/lmc-mail)
+[![PHP Version Require](http://poser.pugx.org/lm-commons/lmc-mail/require/php)](https://packagist.org/packages/lm-commons/lmc-mail)
 # LmcMail
 
 An email service module that provides the ability to use the View renderer of a Laminas MVC application
@@ -17,7 +22,7 @@ Install the module:
 $ composer require lm-commons/lmc-mail
 ````
 
-Composer will inject the module into the modules configuration or you can add it manually to the `modules.config.php` or
+Composer will inject the module into the modules configuration, or you can add it manually to the `modules.config.php` or
 `application.config.php`.
 
 Customize the module by copying and renaming the sample configuration file `lm-commons/lmc-mail/config/lmcmail.local.php.dist` to the application's 
@@ -61,7 +66,7 @@ return [
     ],
 ];
 ````
-In a development environment, it is typical to use a File Mail Transport.  In a production environment, a SMTP Mail Transport will more likely be used.
+In a development environment, it is typical to use a File Mail Transport.  In a production environment, an SMTP Mail Transport will more likely be used.
 
 The `'transport'` configuration must comply with the `Laminas\Mail\Transport\Factory\Factory::create` method.
 
@@ -195,7 +200,7 @@ If you want to use your own renderer, then you can override the Service Manager 
 - `MessageEvent::SEND` is triggered right before the message is sent by the transport service.
 - `MessageEvent::SEND_POST` is triggered right after the message has been sent by the transport service.
 
-The listener to these events will receive a event of class`MessageEvent` that extends the `Event` class with:
+The listener to these events will receive an event of class`MessageEvent` that extends the `Event` class with:
 
 - A `$message` property containing the message. The message is also stored in an event parameter named 'message'.
 - A `getMessage()` method to get the `$message` property.
