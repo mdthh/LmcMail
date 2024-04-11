@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[920],{2891:a=>{a.exports=JSON.parse('{"label":"mail","permalink":"/LmcMail/blog/tags/mail","allTagsPath":"/LmcMail/blog/tags","count":1,"unlisted":false}')}}]);
