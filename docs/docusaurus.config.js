@@ -122,7 +122,7 @@ themeConfig:
                 },
                 {
                     label: 'GitHub',
-                    href: 'https://github.com/lm-commons/lmccors',
+                    href: 'https://github.com/lm-commons/lmcmail',
                 },
                 ],
             },
